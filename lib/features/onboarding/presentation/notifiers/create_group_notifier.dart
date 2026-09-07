@@ -8,6 +8,7 @@ import '../../models/group_invite.dart';
 class CreateGroupNotifier extends ChangeNotifier {
   String? qrData;
   String? generatedGroupId;
+  String? groupName;
   int selectedAvatarIndex = 1;
   UserProfile? localProfile;
 
@@ -17,12 +18,21 @@ class CreateGroupNotifier extends ChangeNotifier {
     return values.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
   }
 
-  void generateQr(String nickname) {
+  void generateQr(String nickname, {String? groupName}) {
     final groupId = const Uuid().v4();
     final aesKey = _generateRandomHex(32); // 64 chars hex
     final t0 = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    final invite = GroupInvite(groupId: groupId, aesKey: aesKey, t0: t0);
+    final trimmedName = groupName?.trim();
+    this.groupName =
+        (trimmedName == null || trimmedName.isEmpty) ? null : trimmedName;
+
+    final invite = GroupInvite(
+      groupId: groupId,
+      aesKey: aesKey,
+      t0: t0,
+      groupName: this.groupName,
+    );
 
     localProfile = UserProfile.create(
       nickname: nickname,

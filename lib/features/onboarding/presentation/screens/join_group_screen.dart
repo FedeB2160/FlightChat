@@ -130,13 +130,16 @@ class _JoinGroupScreenState extends State<JoinGroupScreen> {
                             ? _nicknameController.text.trim()
                             : l10n.nicknameDefault(2);
                         modalNotifier.createProfile(nickname);
-                        final targetGroupId = modalNotifier.scannedInvite!.groupId;
+                        final invite = modalNotifier.scannedInvite!;
                         Navigator.pop(bottomSheetContext);
                         context.go(
-                          '/chat/$targetGroupId',
+                          '/chat/${invite.groupId}',
                           extra: {
                             AppConstants.extraProfile:
                                 modalNotifier.localProfile,
+                            // Il nome arriva dal campo `n` del QR: anche chi si
+                            // unisce scansionando lo vede nell'AppBar.
+                            AppConstants.extraGroupName: invite.groupName,
                           },
                         );
                       },

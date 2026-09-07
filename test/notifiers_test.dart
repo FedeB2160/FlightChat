@@ -117,6 +117,26 @@ void main() {
       expect(invite.aesKey.length, 64);
       // La chiave dev'essere esadecimale, non solo lunga 64.
       expect(RegExp(r'^[0-9a-f]{64}$').hasMatch(invite.aesKey), true);
+      // Senza nome indicato, il payload non porta il campo n.
+      expect(invite.groupName, isNull);
+      expect(notifier.groupName, isNull);
+    });
+
+    test('generateQr puts the group name in the QR payload', () {
+      final notifier = CreateGroupNotifier();
+      notifier.generateQr('Captain', groupName: '  Volo AZ1234  ');
+
+      expect(notifier.groupName, 'Volo AZ1234');
+      final invite = GroupInvite.fromJson(notifier.qrData!);
+      expect(invite.groupName, 'Volo AZ1234');
+    });
+
+    test('generateQr treats a blank group name as absent', () {
+      final notifier = CreateGroupNotifier();
+      notifier.generateQr('Captain', groupName: '   ');
+
+      expect(notifier.groupName, isNull);
+      expect(GroupInvite.fromJson(notifier.qrData!).groupName, isNull);
     });
   });
 

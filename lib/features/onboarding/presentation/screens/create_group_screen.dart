@@ -8,6 +8,7 @@ import '../../../../shared/widgets/avatar_picker_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/qr_display_widget.dart';
 import '../notifiers/create_group_notifier.dart';
+import '../../models/group_invite.dart';
 import '../../../../core/constants/app_constants.dart';
 
 class CreateGroupScreen extends StatefulWidget {
@@ -47,7 +48,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final nickname = _nicknameController.text.trim().isNotEmpty
         ? _nicknameController.text.trim()
         : l10n.captainDefault;
-    notifier.generateQr(nickname);
+    notifier.generateQr(
+      nickname,
+      groupName: _groupNameController.text,
+    );
   }
 
   @override
@@ -70,10 +74,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 if (notifier.qrData == null) ...[
                   TextField(
                     controller: _groupNameController,
+                    maxLength: GroupInvite.maxGroupNameLength,
                     decoration: InputDecoration(
                       hintText: l10n.groupNameHint,
                       prefixIcon: const Icon(Icons.flight),
                     ),
+                    // Contatore nascosto finché il limite non è vicino, come
+                    // per l'input della chat.
+                    buildCounter: (
+                      context, {
+                      required int currentLength,
+                      required bool isFocused,
+                      int? maxLength,
+                    }) {
+                      if (maxLength == null || currentLength < maxLength * 0.9) {
+                        return null;
+                      }
+                      return Text(
+                        '$currentLength/$maxLength',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: AppColors.mutedForeground,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -109,8 +132,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         '/chat/${notifier.generatedGroupId}',
                         extra: {
                           AppConstants.extraProfile: notifier.localProfile,
-                          AppConstants.extraGroupName:
-                              _groupNameController.text.trim(),
+                          AppConstants.extraGroupName: notifier.groupName,
                         },
                       );
                     },
