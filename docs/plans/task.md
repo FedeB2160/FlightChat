@@ -1,0 +1,27 @@
+- [x] Fase 1 — Setup + UI (Welcome, QR, Chat)
+  - [x] Implementazione iniziale (Gemini 3.8 Flash)
+  - [x] Audit compliance: 14 deviazioni trovate
+  - [x] Fix tutte le 14 deviazioni
+  - [x] Audit post-fix: 3 LOW trovati (N2, N3, N4)
+  - [x] Fix 3 LOW: ChatNotifier usa UserProfile, transizioni 300ms
+  - [x] Verifica finale: analyze 0 issues, test 13/13
+- [ ] Fase 2 — SQLite + AES-256-GCM + time_delta
+  - [x] Piano originale scritto
+  - [x] Piano Gemini Pro scritto
+  - [ ] Implementazione
+  - [ ] Audit + Verifica
+- [ ] Fase 3 — Android Kotlin BLE Dual Role
+  - [x] Piano originale scritto
+  - [x] Piano Gemini Pro scritto
+  - [ ] Implementazione
+  - [ ] Audit + Verifica
+- [ ] Fase 4 — iOS Swift CoreBluetooth
+  - [x] Piano originale scritto
+  - [x] Piano Gemini Pro scritto
+  - [ ] Implementazione
+  - [ ] Audit + Verifica
+- [ ] Fase 5 — Gossip Mesh Routing + L2CAP
+  - [x] Piano originale scritto
+  - [x] Piano Gemini Pro scritto
+  - [ ] Implementazione
+  - [ ] Audit + Verifica

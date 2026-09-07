@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "FlightChat",
+  "welcomeSubtitle": "Message offline. Fly connected.",
+  "createFlight": "Create Flight",
+  "joinFlight": "Join Flight",
+  "bluetoothActive": "Bluetooth Active",
+  "bluetoothInactive": "Bluetooth Inactive",
+  "groupNameHint": "e.g. Flight AZ1234",
+  "nicknameHint": "Your nickname",
+  "nicknameDefault": "Passenger-{n}",
+  "@nicknameDefault": { "placeholders": { "n": { "type": "int" } } },
+  "captainDefault": "Captain",
+  "chooseAvatar": "Choose your avatar",
+  "generateQr": "Generate QR Code",
+  "continueToChat": "Continue to Chat",
+  "joinChat": "Join Chat",
+  "scanInstruction": "Frame the Captain's QR Code",
+  "invalidQr": "Invalid QR Code",
+  "messageHint": "Write a message...",
+  "nodesConnected": "{count} nodes connected",
+  "@nodesConnected": { "placeholders": { "count": { "type": "int" } } }
+}
