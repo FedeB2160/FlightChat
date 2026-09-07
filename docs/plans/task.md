@@ -13,11 +13,15 @@
   - [x] Fix a11y: label semantiche, contrasti AA, touch target 48dp, empty state chat
   - [x] Cleanup: l10n duplicati, target desktop/web, .vscode stale, README reale
   - [x] Verifica: analyze 0 issues, test 19/19
-- [ ] Fase 2 — SQLite + AES-256-GCM + time_delta
+- [x] Nome gruppo nel payload QR come campo `n` (PR #2)
+- [x] Fase 2 — SQLite + AES-256-GCM + time_delta
   - [x] Piano originale scritto
   - [x] Piano Gemini Pro scritto
-  - [ ] Implementazione
-  - [ ] Audit + Verifica
+  - [x] DatabaseService, CryptoService, MissionTimeService
+  - [x] GroupRepository, UserProfileRepository, MessageRepository
+  - [x] Wiring: main.dart, router, notifier; mock rimossi, `extra` rimosso
+  - [x] Verifica: analyze 0 issues, test 63/63
+  - [ ] Verifiche manuali su dispositivo (Gradle non eseguibile su questa macchina)
 - [ ] Fase 3 — Android Kotlin BLE Dual Role
   - [x] Piano originale scritto
   - [x] Piano Gemini Pro scritto

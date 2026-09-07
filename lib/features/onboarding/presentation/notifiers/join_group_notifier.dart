@@ -1,9 +1,17 @@
 // lib/features/onboarding/presentation/notifiers/join_group_notifier.dart — State for join group flow
 import 'package:flutter/material.dart';
+
 import '../../../../shared/models/user_profile.dart';
+import '../../data/group_repository.dart';
+import '../../data/user_profile_repository.dart';
 import '../../models/group_invite.dart';
 
 class JoinGroupNotifier extends ChangeNotifier {
+  final GroupRepository groupRepo;
+  final UserProfileRepository profileRepo;
+
+  JoinGroupNotifier({required this.groupRepo, required this.profileRepo});
+
   bool scanSuccess = false;
   GroupInvite? scannedInvite;
   int selectedAvatarIndex = 1;
@@ -28,10 +36,20 @@ class JoinGroupNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void createProfile(String nickname) {
-    localProfile = UserProfile.create(
+  /// Persiste il profilo locale e il gruppo scansionato, con ruolo `'member'`.
+  ///
+  /// Il nome del gruppo arriva dal campo `n` del QR: e la sola fonte per chi si
+  /// unisce, che non ha mai visto la schermata di creazione.
+  Future<void> confirmJoin(String nickname) async {
+    final invite = scannedInvite;
+    if (invite == null) {
+      throw StateError('confirmJoin chiamato senza un invito scansionato');
+    }
+
+    localProfile = await profileRepo.saveLocalProfile(
       nickname: nickname,
       iconIndex: selectedAvatarIndex,
     );
+    await groupRepo.saveGroup(invite, 'member');
   }
 }

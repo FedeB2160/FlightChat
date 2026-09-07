@@ -1,11 +1,20 @@
 // lib/features/onboarding/presentation/notifiers/create_group_notifier.dart — State for group creation flow
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:math';
+
 import '../../../../shared/models/user_profile.dart';
+import '../../data/group_repository.dart';
+import '../../data/user_profile_repository.dart';
 import '../../models/group_invite.dart';
 
 class CreateGroupNotifier extends ChangeNotifier {
+  final GroupRepository groupRepo;
+  final UserProfileRepository profileRepo;
+
+  CreateGroupNotifier({required this.groupRepo, required this.profileRepo});
+
   String? qrData;
   String? generatedGroupId;
   String? groupName;
@@ -18,7 +27,9 @@ class CreateGroupNotifier extends ChangeNotifier {
     return values.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
   }
 
-  void generateQr(String nickname, {String? groupName}) {
+  /// Genera l'invito e lo persiste. Solleva se la scrittura sul database falla:
+  /// mostrare un QR per un gruppo che non esiste sarebbe peggio di un errore.
+  Future<void> generateQr(String nickname, {String? groupName}) async {
     final groupId = const Uuid().v4();
     final aesKey = _generateRandomHex(32); // 64 chars hex
     final t0 = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -34,10 +45,11 @@ class CreateGroupNotifier extends ChangeNotifier {
       groupName: this.groupName,
     );
 
-    localProfile = UserProfile.create(
+    localProfile = await profileRepo.saveLocalProfile(
       nickname: nickname,
       iconIndex: selectedAvatarIndex,
     );
+    await groupRepo.saveGroup(invite, 'captain');
 
     generatedGroupId = groupId;
     qrData = invite.toJson();

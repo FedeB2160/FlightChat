@@ -7,8 +7,10 @@ mittente e ripetitore. Funziona in Modalità Aereo con il Bluetooth attivo.
 ## Come funziona
 
 **Onboarding senza accoppiamento.** Il "Capitano" crea il gruppo e l'app genera un QR code
-contenente `{"g": "<uuid gruppo>", "k": "<chiave AES-256>", "t0": <unix timestamp>}`. Gli altri
-passeggeri lo scansionano per unirsi. Nessuna schermata di pairing, nessun account.
+contenente `{"g": "<uuid gruppo>", "k": "<chiave AES-256>", "t0": <unix timestamp>, "n":
+"<nome volo>"}`. Gli altri passeggeri lo scansionano per unirsi: `n` è opzionale ed è la sola
+fonte del nome del gruppo per chi non ha creato il volo. Nessuna schermata di pairing, nessun
+account.
 
 **Tempo di missione.** L'ora locale dei dispositivi non è affidabile né allineata, quindi non
 viene usata. Dal QR si estrae il tempo zero `t0`; ogni messaggio memorizza solo il proprio
@@ -34,8 +36,8 @@ L2CAP CoC verso il dispositivo che lo possiede, con fallback al chunking GATT do
 | Livello | Scelta |
 |---|---|
 | UI e logica applicativa | Flutter (Dart), Provider / ChangeNotifier, GoRouter |
-| Database locale | SQLite via `sqflite` (Fase 2) |
-| Crittografia | AES-256-GCM, chiave trasportata dal QR (Fase 2) |
+| Database locale | SQLite via `sqflite` |
+| Crittografia | AES-256-GCM (`encrypt` su pointycastle), chiave trasportata dal QR |
 | Motore BLE | Moduli nativi: Kotlin con le Bluetooth API (Fase 3), Swift con CoreBluetooth (Fase 4) |
 | Ponte UI ↔ nativo | Method Channel `com.flightchat/ble` |
 
@@ -50,7 +52,7 @@ Target: Android 12+ (API 31), iOS 16+. Gruppi da 10 a 30 nodi, TTL di default 3.
 | Fase | Contenuto | Stato |
 |---|---|---|
 | 1 | Setup progetto, design system, 4 schermate, QR generation e scanning, dati mock | Completata |
-| 2 | SQLite, AES-256-GCM, tabella messaggi e logica `time_delta` | Da fare |
+| 2 | SQLite, AES-256-GCM, tabella messaggi e logica `time_delta` | Completata |
 | 3 | Modulo nativo Android: BLE Dual Role, foreground service, bridge | Da fare |
 | 4 | Modulo nativo iOS: CoreBluetooth manager, State Restoration, bridge | Da fare |
 | 5 | Routing mesh (gossip, TTL) e canali L2CAP per i file | Da fare |
@@ -58,9 +60,11 @@ Target: Android 12+ (API 31), iOS 16+. Gruppi da 10 a 30 nodi, TTL di default 3.
 I piani di dettaglio delle cinque fasi sono in [`docs/plans/`](docs/plans/), lo stato di
 avanzamento in [`docs/plans/task.md`](docs/plans/task.md).
 
-Quello che la Fase 1 **non** contiene ancora, per scelta di piano: nessun database, nessun
-cifrario, nessun codice BLE. La chat mostra messaggi mock e il contatore dei nodi mesh è fisso
-a 4 finché non esiste un modulo nativo che lo alimenti.
+Quello che **non** c'è ancora, per scelta di piano: nessun codice BLE. Il contatore dei nodi
+mesh è fisso a 4 finché non esiste un modulo nativo che lo alimenti, e i messaggi non lasciano
+il dispositivo. Quello che invece funziona: gruppi, profilo e messaggi persistono in SQLite, il
+contenuto dei messaggi è cifrato AES-256-GCM con la chiave del QR, e i timestamp derivano dal
+`t0` del gruppo.
 
 ## Requisiti
 
@@ -119,10 +123,11 @@ lib/
 ├── core/
 │   ├── theme/                   # Token colore, tipografia, ThemeData
 │   ├── router/                  # Configurazione GoRouter
-│   └── constants/               # TTL, MTU, chiavi di navigazione
+│   ├── services/                # SQLite, AES-256-GCM, Mission Time
+│   └── constants/               # TTL, MTU e altre costanti di protocollo
 ├── features/
-│   ├── onboarding/              # Welcome, creazione gruppo, scanner QR
-│   └── chat/                    # Lista messaggi, bolle, input, stato mesh
+│   ├── onboarding/              # Welcome, creazione gruppo, scanner QR, repository
+│   └── chat/                    # Lista messaggi, bolle, input, stato mesh, repository
 └── shared/                      # Modelli e widget riusabili
 ```
 

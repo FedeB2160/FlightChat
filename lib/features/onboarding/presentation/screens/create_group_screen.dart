@@ -9,7 +9,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../widgets/qr_display_widget.dart';
 import '../notifiers/create_group_notifier.dart';
 import '../../models/group_invite.dart';
-import '../../../../core/constants/app_constants.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
@@ -42,16 +41,27 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     super.dispose();
   }
 
-  void _handleGenerateQr() {
+  Future<void> _handleGenerateQr() async {
     final notifier = context.read<CreateGroupNotifier>();
     final l10n = AppLocalizations.of(context)!;
     final nickname = _nicknameController.text.trim().isNotEmpty
         ? _nicknameController.text.trim()
         : l10n.captainDefault;
-    notifier.generateQr(
-      nickname,
-      groupName: _groupNameController.text,
-    );
+    try {
+      await notifier.generateQr(
+        nickname,
+        groupName: _groupNameController.text,
+      );
+    } catch (e) {
+      debugPrint('CreateGroupScreen: creazione gruppo non riuscita: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.saveFailed),
+          backgroundColor: AppColors.destructive,
+        ),
+      );
+    }
   }
 
   @override
@@ -128,13 +138,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () {
-                      context.go(
-                        '/chat/${notifier.generatedGroupId}',
-                        extra: {
-                          AppConstants.extraProfile: notifier.localProfile,
-                          AppConstants.extraGroupName: notifier.groupName,
-                        },
-                      );
+                      // Gruppo e profilo sono già nel database: alla chat basta
+                      // il groupId, niente più da passare in `extra`.
+                      context.go('/chat/${notifier.generatedGroupId}');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondary,
