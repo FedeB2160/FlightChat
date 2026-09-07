@@ -8,15 +8,20 @@ import 'message_bubble.dart';
 class MessageList extends StatelessWidget {
   final List<ChatMessage> messages;
   final ScrollController scrollController;
+  final bool isLoading;
 
   const MessageList({
     super.key,
     required this.messages,
     required this.scrollController,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (messages.isEmpty) return const _EmptyChat();
 
     return ListView.builder(
@@ -68,7 +73,7 @@ class MessageList extends StatelessWidget {
   }
 }
 
-/// Raggiungibile appena la Fase 2 sostituisce i mock con le righe del DB.
+/// Mostrato per un gruppo senza messaggi: i mock non esistono piu.
 class _EmptyChat extends StatelessWidget {
   const _EmptyChat();
 

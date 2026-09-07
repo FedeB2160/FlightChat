@@ -92,6 +92,22 @@ class AppLocalizationsIt extends AppLocalizations {
   String get emptyChatTitle => 'Nessun messaggio';
 
   @override
+  String get undecryptableMessage => 'Messaggio non decifrabile';
+
+  @override
+  String get groupNotFoundTitle => 'Volo non trovato';
+
+  @override
+  String get groupNotFoundHint =>
+      'Questo volo non è salvato su questo dispositivo. Scansiona di nuovo il QR code per unirti.';
+
+  @override
+  String get sendFailed => 'Messaggio non inviato. Riprova.';
+
+  @override
+  String get saveFailed => 'Salvataggio non riuscito. Riprova.';
+
+  @override
   String get emptyChatHint =>
       'I messaggi scambiati su questo volo appariranno qui.';
 }

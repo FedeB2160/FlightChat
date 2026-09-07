@@ -142,12 +142,38 @@ class _MessageBubbleState extends State<MessageBubble>
                             ),
                           ),
                         ),
-                      Text(
-                        message.content,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isMe ? AppColors.onPrimary : AppColors.foreground,
+                      if (message.decryptFailed)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.lock_outline,
+                              size: 14,
+                              color: isMe
+                                  ? AppColors.onPrimary
+                                  : AppColors.mutedForeground,
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                l10n.undecryptableMessage,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: isMe
+                                      ? AppColors.onPrimary
+                                      : AppColors.mutedForeground,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Text(
+                          message.content,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: isMe ? AppColors.onPrimary : AppColors.foreground,
+                          ),
                         ),
-                      ),
                       const SizedBox(height: 4),
                       Row(
                         mainAxisSize: MainAxisSize.min,

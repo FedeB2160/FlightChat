@@ -29,5 +29,10 @@
   "statusSent": "Sent",
   "statusDelivered": "Delivered in the mesh",
   "emptyChatTitle": "No messages yet",
+  "undecryptableMessage": "Message cannot be decrypted",
+  "groupNotFoundTitle": "Flight not found",
+  "groupNotFoundHint": "This flight is not saved on this device. Scan the QR code again to join.",
+  "sendFailed": "Message not sent. Try again.",
+  "saveFailed": "Could not save. Try again.",
   "emptyChatHint": "Messages exchanged on this flight will appear here."
 }

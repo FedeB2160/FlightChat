@@ -29,5 +29,10 @@
   "statusSent": "Inviato",
   "statusDelivered": "Consegnato nella mesh",
   "emptyChatTitle": "Nessun messaggio",
+  "undecryptableMessage": "Messaggio non decifrabile",
+  "groupNotFoundTitle": "Volo non trovato",
+  "groupNotFoundHint": "Questo volo non è salvato su questo dispositivo. Scansiona di nuovo il QR code per unirti.",
+  "sendFailed": "Messaggio non inviato. Riprova.",
+  "saveFailed": "Salvataggio non riuscito. Riprova.",
   "emptyChatHint": "I messaggi scambiati su questo volo appariranno qui."
 }

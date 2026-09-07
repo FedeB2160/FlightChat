@@ -11,11 +11,7 @@ import 'package:flight_chat/l10n/gen/app_localizations.dart';
 class ChatScreen extends StatefulWidget {
   final String groupId;
 
-  /// Nome scelto dal Capitano. Null per chi entra scansionando il QR: il payload
-  /// {g,k,t0} non lo trasporta, quindi l'AppBar cade sul nome dell'app.
-  final String? groupName;
-
-  const ChatScreen({super.key, required this.groupId, this.groupName});
+  const ChatScreen({super.key, required this.groupId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -48,9 +44,21 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _handleSend(String text) {
-    context.read<ChatNotifier>().sendMessage(text);
-    _scrollToBottom();
+  Future<void> _handleSend(String text) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await context.read<ChatNotifier>().sendMessage(text);
+      _scrollToBottom();
+    } catch (e) {
+      debugPrint('ChatScreen: invio non riuscito: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.sendFailed),
+          backgroundColor: AppColors.destructive,
+        ),
+      );
+    }
   }
 
   @override
@@ -66,10 +74,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        // Il titolo e' il nome gruppo; la status bar mesh sta in `bottom` e non
-        // nel Column del titolo, che a text scale alto sfondava i 56dp dell'AppBar.
+        // Il titolo è il nome gruppo, che arriva dal database e per chi si
+        // unisce risale al campo `n` del QR.
         title: Text(
-          widget.groupName ?? l10n.appTitle,
+          notifier.groupName ?? l10n.appTitle,
           style: const TextStyle(fontSize: 16),
           overflow: TextOverflow.ellipsis,
         ),
@@ -79,17 +87,20 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Center(child: MeshStatusBar(connectedNodes: 4)),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: MessageList(
-              messages: notifier.messages,
-              scrollController: _scrollController,
+      body: notifier.groupMissing
+          ? _GroupMissing(groupId: widget.groupId)
+          : Column(
+              children: [
+                Expanded(
+                  child: MessageList(
+                    messages: notifier.messages,
+                    scrollController: _scrollController,
+                    isLoading: notifier.isLoading,
+                  ),
+                ),
+                MessageInput(onSend: _handleSend),
+              ],
             ),
-          ),
-          MessageInput(onSend: _handleSend),
-        ],
-      ),
       floatingActionButton: notifier.showFab
           ? FloatingActionButton(
               backgroundColor: AppColors.surface,
@@ -99,6 +110,45 @@ class _ChatScreenState extends State<ChatScreen> {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+}
+
+/// Raggiungibile aprendo /chat/:groupId per un gruppo mai creato né scansionato.
+class _GroupMissing extends StatelessWidget {
+  final String groupId;
+
+  const _GroupMissing({required this.groupId});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.help_outline, size: 48, color: AppColors.border),
+            const SizedBox(height: 16),
+            Text(
+              l10n.groupNotFoundTitle,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.groupNotFoundHint,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.mutedForeground,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

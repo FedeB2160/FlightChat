@@ -7,7 +7,6 @@ import '../../../../shared/widgets/avatar_picker_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/qr_scanner_widget.dart';
 import '../notifiers/join_group_notifier.dart';
-import '../../../../core/constants/app_constants.dart';
 
 class JoinGroupScreen extends StatefulWidget {
   const JoinGroupScreen({super.key});
@@ -53,6 +52,37 @@ class _JoinGroupScreenState extends State<JoinGroupScreen> {
         ),
       );
     }
+  }
+
+  /// Persiste profilo e gruppo, e solo dopo naviga: entrare in una chat il cui
+  /// gruppo non è stato salvato porterebbe alla schermata "volo non trovato".
+  Future<void> _handleJoin(
+    JoinGroupNotifier notifier,
+    BuildContext sheetContext,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final nickname = _nicknameController.text.trim().isNotEmpty
+        ? _nicknameController.text.trim()
+        : l10n.nicknameDefault(2);
+    final groupId = notifier.scannedInvite!.groupId;
+
+    try {
+      await notifier.confirmJoin(nickname);
+    } catch (e) {
+      debugPrint('JoinGroupScreen: join non riuscito: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.saveFailed),
+          backgroundColor: AppColors.destructive,
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    if (sheetContext.mounted) Navigator.pop(sheetContext);
+    context.go('/chat/$groupId');
   }
 
   void _showProfileBottomSheet() {
@@ -125,24 +155,10 @@ class _JoinGroupScreenState extends State<JoinGroupScreen> {
                     ),
                     const SizedBox(height: 32),
                     ElevatedButton(
-                      onPressed: () {
-                        final nickname = _nicknameController.text.trim().isNotEmpty
-                            ? _nicknameController.text.trim()
-                            : l10n.nicknameDefault(2);
-                        modalNotifier.createProfile(nickname);
-                        final invite = modalNotifier.scannedInvite!;
-                        Navigator.pop(bottomSheetContext);
-                        context.go(
-                          '/chat/${invite.groupId}',
-                          extra: {
-                            AppConstants.extraProfile:
-                                modalNotifier.localProfile,
-                            // Il nome arriva dal campo `n` del QR: anche chi si
-                            // unisce scansionando lo vede nell'AppBar.
-                            AppConstants.extraGroupName: invite.groupName,
-                          },
-                        );
-                      },
+                      onPressed: () => _handleJoin(
+                        modalNotifier,
+                        bottomSheetContext,
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.secondary,
                       ),

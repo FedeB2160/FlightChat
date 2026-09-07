@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:flight_chat/l10n/gen/app_localizations.dart';
 
 import '../../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../../features/onboarding/presentation/screens/create_group_screen.dart';
@@ -11,8 +10,9 @@ import '../../features/chat/presentation/screens/chat_screen.dart';
 import '../../features/onboarding/presentation/notifiers/create_group_notifier.dart';
 import '../../features/onboarding/presentation/notifiers/join_group_notifier.dart';
 import '../../features/chat/presentation/notifiers/chat_notifier.dart';
-import '../../shared/models/user_profile.dart';
-import '../constants/app_constants.dart';
+import '../../features/chat/data/message_repository.dart';
+import '../../features/onboarding/data/group_repository.dart';
+import '../../features/onboarding/data/user_profile_repository.dart';
 
 /// Slide + fade condivisa dalle rotte. Rispetta "rimuovi animazioni" di sistema.
 Widget _slideFade(
@@ -46,7 +46,10 @@ final appRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         transitionDuration: const Duration(milliseconds: 300),
         child: ChangeNotifierProvider(
-          create: (_) => CreateGroupNotifier(),
+          create: (context) => CreateGroupNotifier(
+            groupRepo: context.read<GroupRepository>(),
+            profileRepo: context.read<UserProfileRepository>(),
+          ),
           child: const CreateGroupScreen(),
         ),
         transitionsBuilder: _slideFade,
@@ -57,7 +60,10 @@ final appRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         transitionDuration: const Duration(milliseconds: 300),
         child: ChangeNotifierProvider(
-          create: (_) => JoinGroupNotifier(),
+          create: (context) => JoinGroupNotifier(
+            groupRepo: context.read<GroupRepository>(),
+            profileRepo: context.read<UserProfileRepository>(),
+          ),
           child: const JoinGroupScreen(),
         ),
         transitionsBuilder: _slideFade,
@@ -67,31 +73,21 @@ final appRouter = GoRouter(
       path: '/chat/:groupId',
       pageBuilder: (context, state) {
         final groupId = state.pathParameters['groupId']!;
-        final l10n = AppLocalizations.of(context)!;
 
-        // ponytail: profilo e nome gruppo viaggiano in `extra`, quindi si perdono a
-        // restart o deep link. Sufficiente per Fase 1: persisterli e' deliverable
-        // di Fase 2 (SQLite). Senza extra la chat resta usabile in sola lettura.
-        final extra = state.extra;
-        final data = extra is Map ? extra : const <Object?, Object?>{};
-        final profile = data[AppConstants.extraProfile];
-        final groupName = data[AppConstants.extraGroupName];
-
+        // Il solo groupId basta: chiave, t0, nome gruppo e profilo locale
+        // arrivano dal database, quindi la rotta funziona anche a freddo dopo
+        // un restart o da deep link. Il passaggio via `extra` della Fase 1
+        // non serve più.
         return CustomTransitionPage(
           transitionDuration: const Duration(milliseconds: 300),
           child: ChangeNotifierProvider(
-            create: (_) => ChatNotifier(
+            create: (context) => ChatNotifier(
               groupId: groupId,
-              localProfile: profile is UserProfile ? profile : null,
-              mockCaptainName: l10n.captainDefault,
-              mockPassengerName: l10n.nicknameDefault(2),
+              messageRepo: context.read<MessageRepository>(),
+              groupRepo: context.read<GroupRepository>(),
+              profileRepo: context.read<UserProfileRepository>(),
             ),
-            child: ChatScreen(
-              groupId: groupId,
-              groupName: groupName is String && groupName.trim().isNotEmpty
-                  ? groupName.trim()
-                  : null,
-            ),
+            child: ChatScreen(groupId: groupId),
           ),
           transitionsBuilder: _slideFade,
         );
