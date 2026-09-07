@@ -2,6 +2,8 @@
 import 'dart:convert';
 
 class GroupInvite {
+  static final RegExp _hex64 = RegExp(r'^[0-9a-fA-F]{64}$');
+
   final String groupId;
   final String aesKey;
   final int t0;
@@ -24,15 +26,23 @@ class GroupInvite {
     if (!map.containsKey('g') || !map.containsKey('k') || !map.containsKey('t0')) {
       throw const FormatException("Invalid QR payload: missing required fields");
     }
-    final groupId = map['g'] as String;
-    final aesKey = map['k'] as String;
-    final t0 = map['t0'] as int;
+    final rawGroupId = map['g'];
+    final rawAesKey = map['k'];
+    final rawT0 = map['t0'];
+    if (rawGroupId is! String || rawAesKey is! String || rawT0 is! int) {
+      throw const FormatException('Invalid QR payload: unexpected field types');
+    }
+    final groupId = rawGroupId;
+    final aesKey = rawAesKey;
+    final t0 = rawT0;
 
     if (groupId.isEmpty) {
       throw const FormatException("Invalid QR payload: groupId is empty");
     }
-    if (aesKey.length != 64) {
-      throw FormatException("Invalid QR payload: encryptionKey must be 64 hex chars, got ${aesKey.length}");
+    if (!_hex64.hasMatch(aesKey)) {
+      throw FormatException(
+        "Invalid QR payload: encryptionKey must be 64 hex chars, got ${aesKey.length}",
+      );
     }
     if (t0 <= 0) {
       throw const FormatException("Invalid QR payload: t0 must be > 0");

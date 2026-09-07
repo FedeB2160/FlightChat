@@ -19,5 +19,15 @@
   "invalidQr": "Invalid QR Code",
   "messageHint": "Write a message...",
   "nodesConnected": "{count} nodes connected",
-  "@nodesConnected": { "placeholders": { "count": { "type": "int" } } }
+  "@nodesConnected": { "placeholders": { "count": { "type": "int" } } },
+  "sendMessageLabel": "Send message",
+  "scrollToBottomLabel": "Scroll to latest messages",
+  "avatarOptionLabel": "Avatar {index}",
+  "@avatarOptionLabel": { "placeholders": { "index": { "type": "int" } } },
+  "senderAvatarLabel": "Avatar of {name}",
+  "@senderAvatarLabel": { "placeholders": { "name": { "type": "String" } } },
+  "statusSent": "Sent",
+  "statusDelivered": "Delivered in the mesh",
+  "emptyChatTitle": "No messages yet",
+  "emptyChatHint": "Messages exchanged on this flight will appear here."
 }

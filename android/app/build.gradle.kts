@@ -19,7 +19,9 @@ android {
         applicationId = "com.flightchat.flight_chat"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // Android 12+ come da piano: i permessi BLUETOOTH_SCAN/ADVERTISE/CONNECT
+        // sono API 31+, quindi il minSdk va fissato e non delegato.
+        minSdk = 31
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

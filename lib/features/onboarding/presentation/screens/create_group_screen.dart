@@ -8,6 +8,7 @@ import '../../../../shared/widgets/avatar_picker_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/qr_display_widget.dart';
 import '../notifiers/create_group_notifier.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({super.key});
@@ -104,7 +105,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () {
-                      context.go('/chat/${notifier.generatedGroupId}');
+                      context.go(
+                        '/chat/${notifier.generatedGroupId}',
+                        extra: {
+                          AppConstants.extraProfile: notifier.localProfile,
+                          AppConstants.extraGroupName:
+                              _groupNameController.text.trim(),
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondary,

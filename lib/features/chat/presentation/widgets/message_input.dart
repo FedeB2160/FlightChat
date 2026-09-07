@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flight_chat/l10n/gen/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class MessageInput extends StatefulWidget {
   final Function(String) onSend;
@@ -37,11 +38,13 @@ class _MessageInputState extends State<MessageInput>
   void _handleSend() {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
-      _animController.forward().then((_) {
-        if (mounted) {
-          _animController.reverse();
-        }
-      });
+      if (!MediaQuery.disableAnimationsOf(context)) {
+        _animController.forward().then((_) {
+          if (mounted) {
+            _animController.reverse();
+          }
+        });
+      }
       widget.onSend(text);
       _controller.clear();
     }
@@ -81,6 +84,8 @@ class _MessageInputState extends State<MessageInput>
               maxLines: 5,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _handleSend(),
+              // Il payload deve stare in un pacchetto BLE (Fase 3/5).
+              maxLength: AppConstants.bleMtu,
               decoration: InputDecoration(
                 hintText: l10n.messageHint,
                 contentPadding: const EdgeInsets.symmetric(
@@ -88,6 +93,24 @@ class _MessageInputState extends State<MessageInput>
                   vertical: 12,
                 ),
               ),
+              // Contatore nascosto finché il limite non è vicino: un muro
+              // silenzioso a 512 caratteri sarebbe peggio del rumore visivo.
+              buildCounter: (
+                context, {
+                required int currentLength,
+                required bool isFocused,
+                int? maxLength,
+              }) {
+                if (maxLength == null || currentLength < maxLength * 0.9) {
+                  return null;
+                }
+                return Text(
+                  '$currentLength/$maxLength',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.mutedForeground,
+                      ),
+                );
+              },
             ),
           ),
           const SizedBox(width: 12),
@@ -102,6 +125,7 @@ class _MessageInputState extends State<MessageInput>
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.send, color: AppColors.onPrimary),
+                  tooltip: l10n.sendMessageLabel,
                   onPressed: _handleSend,
                 ),
               ),

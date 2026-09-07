@@ -1,5 +1,6 @@
 // lib/features/chat/presentation/widgets/message_bubble.dart — Message bubble with entrance slide/fade animation, avatar, timestamp, and delivery status
 import 'package:flutter/material.dart';
+import 'package:flight_chat/l10n/gen/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../models/chat_message.dart';
 import '../../../../shared/models/user_profile.dart';
@@ -18,6 +19,7 @@ class _MessageBubbleState extends State<MessageBubble>
   late final AnimationController _animController;
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _opacityAnimation;
+  bool _entranceStarted = false;
 
   @override
   void initState() {
@@ -40,7 +42,19 @@ class _MessageBubbleState extends State<MessageBubble>
       parent: _animController,
       curve: Curves.easeOut,
     ));
-    _animController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_entranceStarted) return;
+    _entranceStarted = true;
+    // MediaQuery non è leggibile in initState: l'avvio va qui.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _animController.value = 1.0;
+    } else {
+      _animController.forward();
+    }
   }
 
   @override
@@ -54,6 +68,7 @@ class _MessageBubbleState extends State<MessageBubble>
     final message = widget.message;
     final isMe = message.isMine;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     Color avatarColor = AppColors.muted;
     IconData avatarIcon = Icons.person;
@@ -78,17 +93,20 @@ class _MessageBubbleState extends State<MessageBubble>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!isMe) ...[
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: avatarColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    avatarIcon,
-                    color: Colors.white,
-                    size: 20,
+                Semantics(
+                  label: l10n.senderAvatarLabel(message.senderName),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: avatarColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      avatarIcon,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -118,7 +136,8 @@ class _MessageBubbleState extends State<MessageBubble>
                           child: Text(
                             message.senderName,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.secondary,
+                              // secondary su surface è 4.07:1, sotto AA per 12px
+                              color: AppColors.secondaryLight,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -136,8 +155,9 @@ class _MessageBubbleState extends State<MessageBubble>
                           Text(
                             message.formattedTime,
                             style: theme.textTheme.labelSmall?.copyWith(
+                              // alpha 0.7 su primary dava 3.35:1, opaco dà 5.17:1
                               color: isMe
-                                  ? AppColors.onPrimary.withValues(alpha: 0.7)
+                                  ? AppColors.onPrimary
                                   : AppColors.mutedForeground,
                             ),
                           ),
@@ -148,7 +168,11 @@ class _MessageBubbleState extends State<MessageBubble>
                                   ? Icons.done_all
                                   : Icons.check,
                               size: 14,
-                              color: AppColors.onPrimary.withValues(alpha: 0.7),
+                              color: AppColors.onPrimary,
+                              semanticLabel:
+                                  message.status == MessageStatus.delivered
+                                      ? l10n.statusDelivered
+                                      : l10n.statusSent,
                             ),
                           ],
                         ],

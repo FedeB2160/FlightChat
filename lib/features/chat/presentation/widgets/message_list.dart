@@ -1,5 +1,7 @@
 // lib/features/chat/presentation/widgets/message_list.dart — Reverse ListView of chat messages with 5-minute interval dividers
 import 'package:flutter/material.dart';
+import 'package:flight_chat/l10n/gen/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../models/chat_message.dart';
 import 'message_bubble.dart';
 
@@ -15,6 +17,8 @@ class MessageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (messages.isEmpty) return const _EmptyChat();
+
     return ListView.builder(
       controller: scrollController,
       reverse: true,
@@ -60,6 +64,47 @@ class MessageList extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// Raggiungibile appena la Fase 2 sostituisce i mock con le righe del DB.
+class _EmptyChat extends StatelessWidget {
+  const _EmptyChat();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.forum_outlined,
+              size: 48,
+              color: AppColors.border,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.emptyChatTitle,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.emptyChatHint,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.mutedForeground,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

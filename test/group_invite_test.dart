@@ -35,6 +35,25 @@ void main() {
       );
     });
 
+    test('throws when aesKey is 64 chars but not hexadecimal', () {
+      final notHex = 'z' * 64;
+      expect(
+        () => GroupInvite.fromJson('{"g":"test-group","k":"$notHex","t0":100}'),
+        throwsFormatException,
+      );
+    });
+
+    test('throws FormatException on wrong field types', () {
+      expect(
+        () => GroupInvite.fromJson('{"g":"test-group","k":"$validKey","t0":"100"}'),
+        throwsFormatException,
+      );
+      expect(
+        () => GroupInvite.fromJson('{"g":123,"k":"$validKey","t0":100}'),
+        throwsFormatException,
+      );
+    });
+
     test('throws when t0 <= 0', () {
       expect(
         () => GroupInvite.fromJson('{"g":"test-group","k":"$validKey","t0":0}'),

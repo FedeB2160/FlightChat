@@ -19,5 +19,15 @@
   "invalidQr": "QR Code non valido",
   "messageHint": "Scrivi un messaggio...",
   "nodesConnected": "{count} nodi connessi",
-  "@nodesConnected": { "placeholders": { "count": { "type": "int" } } }
+  "@nodesConnected": { "placeholders": { "count": { "type": "int" } } },
+  "sendMessageLabel": "Invia messaggio",
+  "scrollToBottomLabel": "Scorri agli ultimi messaggi",
+  "avatarOptionLabel": "Avatar {index}",
+  "@avatarOptionLabel": { "placeholders": { "index": { "type": "int" } } },
+  "senderAvatarLabel": "Avatar di {name}",
+  "@senderAvatarLabel": { "placeholders": { "name": { "type": "String" } } },
+  "statusSent": "Inviato",
+  "statusDelivered": "Consegnato nella mesh",
+  "emptyChatTitle": "Nessun messaggio",
+  "emptyChatHint": "I messaggi scambiati su questo volo appariranno qui."
 }

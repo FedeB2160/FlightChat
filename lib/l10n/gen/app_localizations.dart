@@ -205,6 +205,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} nodes connected'**
   String nodesConnected(int count);
+
+  /// No description provided for @sendMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get sendMessageLabel;
+
+  /// No description provided for @scrollToBottomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll to latest messages'**
+  String get scrollToBottomLabel;
+
+  /// No description provided for @avatarOptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar {index}'**
+  String avatarOptionLabel(int index);
+
+  /// No description provided for @senderAvatarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avatar of {name}'**
+  String senderAvatarLabel(String name);
+
+  /// No description provided for @statusSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get statusSent;
+
+  /// No description provided for @statusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered in the mesh'**
+  String get statusDelivered;
+
+  /// No description provided for @emptyChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get emptyChatTitle;
+
+  /// No description provided for @emptyChatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages exchanged on this flight will appear here.'**
+  String get emptyChatHint;
 }
 
 class _AppLocalizationsDelegate
