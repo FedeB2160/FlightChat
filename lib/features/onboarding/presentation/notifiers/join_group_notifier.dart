@@ -17,7 +17,8 @@ class JoinGroupNotifier extends ChangeNotifier {
       scanSuccess = true;
       notifyListeners();
       return true;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('JoinGroupNotifier: QR payload rifiutato: $e');
       return false;
     }
   }

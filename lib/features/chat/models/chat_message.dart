@@ -1,5 +1,4 @@
-// lib/features/chat/models/chat_message.dart — Chat message domain model and mock factory
-import 'package:uuid/uuid.dart';
+// lib/features/chat/models/chat_message.dart — Chat message domain model
 
 enum MessageStatus { sending, sent, delivered }
 
@@ -34,24 +33,6 @@ class ChatMessage {
     return 'T+$hours:$minutes:$seconds';
   }
 
-  factory ChatMessage.mock({
-    required String senderName,
-    required String content,
-    required int timeDelta,
-    required bool isMine,
-    MessageStatus status = MessageStatus.delivered,
-  }) {
-    final cleanName = senderName.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
-    return ChatMessage(
-      messageId: const Uuid().v4(),
-      senderId: 'mock-user-$cleanName',
-      senderName: senderName,
-      senderAvatarIconIndex: 1, // Default person icon index
-      senderDeviceId: 'mock-device-$cleanName',
-      content: content,
-      timeDelta: timeDelta,
-      isMine: isMine,
-      status: status,
-    );
-  }
+  // DECISION: rimossa la factory `ChatMessage.mock()` prescritta dal piano:
+  // zero chiamanti, e ChatNotifier costruisce i mock direttamente col profilo reale.
 }

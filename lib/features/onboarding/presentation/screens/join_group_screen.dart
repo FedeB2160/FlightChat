@@ -7,6 +7,7 @@ import '../../../../shared/widgets/avatar_picker_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/qr_scanner_widget.dart';
 import '../notifiers/join_group_notifier.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class JoinGroupScreen extends StatefulWidget {
   const JoinGroupScreen({super.key});
@@ -131,7 +132,13 @@ class _JoinGroupScreenState extends State<JoinGroupScreen> {
                         modalNotifier.createProfile(nickname);
                         final targetGroupId = modalNotifier.scannedInvite!.groupId;
                         Navigator.pop(bottomSheetContext);
-                        context.go('/chat/$targetGroupId');
+                        context.go(
+                          '/chat/$targetGroupId',
+                          extra: {
+                            AppConstants.extraProfile:
+                                modalNotifier.localProfile,
+                          },
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.secondary,

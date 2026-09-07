@@ -5,6 +5,10 @@ abstract class AppColors {
   static const Color primary = Color(0xFF2563EB);       // Azioni, bubble propria
   static const Color onPrimary = Color(0xFFFFFFFF);      // Testo su primary
   static const Color secondary = Color(0xFF6366F1);      // Accenti, stato
+  // DECISION: token fuori dalla palette del piano. `secondary` su `surface` dà 4.07:1,
+  // sotto il minimo WCAG AA di 4.5:1 per il nickname mittente (bodySmall 12px).
+  // Questa variante più chiara sullo stesso hue dà 6.09:1.
+  static const Color secondaryLight = Color(0xFF818CF8); // Nickname mittente su surface
   static const Color accent = Color(0xFF059669);          // Online, conferma, successo
   static const Color background = Color(0xFF0F172A);      // Sfondo app
   static const Color surface = Color(0xFF111827);          // Card, bubble altrui
