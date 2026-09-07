@@ -5,6 +5,14 @@
   - [x] Audit post-fix: 3 LOW trovati (N2, N3, N4)
   - [x] Fix 3 LOW: ChatNotifier usa UserProfile, transizioni 300ms
   - [x] Verifica finale: analyze 0 issues, test 13/13
+  - [x] Audit indipendente vs piano: 1 blocker, 19 deviazioni, 6 problemi a11y
+  - [x] Fix blocker: profilo onboarding inoltrato alla chat via GoRouter extra
+  - [x] Fix blocker: NSCameraUsageDescription (lo scanner QR terminava l'app iOS)
+  - [x] Permessi piattaforma: CAMERA, BLUETOOTH_*, FOREGROUND_SERVICE, UIBackgroundModes
+  - [x] Fix conformita: nome gruppo in AppBar, mock coerenti e localizzati, reduceMotion globale
+  - [x] Fix a11y: label semantiche, contrasti AA, touch target 48dp, empty state chat
+  - [x] Cleanup: l10n duplicati, target desktop/web, .vscode stale, README reale
+  - [x] Verifica: analyze 0 issues, test 19/19
 - [ ] Fase 2 — SQLite + AES-256-GCM + time_delta
   - [x] Piano originale scritto
   - [x] Piano Gemini Pro scritto

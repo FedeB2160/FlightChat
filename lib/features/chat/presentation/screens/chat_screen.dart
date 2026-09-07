@@ -11,7 +11,11 @@ import 'package:flight_chat/l10n/gen/app_localizations.dart';
 class ChatScreen extends StatefulWidget {
   final String groupId;
 
-  const ChatScreen({super.key, required this.groupId});
+  /// Nome scelto dal Capitano. Null per chi entra scansionando il QR: il payload
+  /// {g,k,t0} non lo trasporta, quindi l'AppBar cade sul nome dell'app.
+  final String? groupName;
+
+  const ChatScreen({super.key, required this.groupId, this.groupName});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -36,7 +40,9 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         0.0,
-        duration: const Duration(milliseconds: 300),
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     }
@@ -60,17 +66,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          children: [
-            Text(
-              l10n.appTitle,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 4),
-            const MeshStatusBar(connectedNodes: 4),
-          ],
+        // Il titolo e' il nome gruppo; la status bar mesh sta in `bottom` e non
+        // nel Column del titolo, che a text scale alto sfondava i 56dp dell'AppBar.
+        title: Text(
+          widget.groupName ?? l10n.appTitle,
+          style: const TextStyle(fontSize: 16),
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(32),
+          child: Center(child: MeshStatusBar(connectedNodes: 4)),
+        ),
       ),
       body: Column(
         children: [
@@ -84,8 +91,9 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
       floatingActionButton: notifier.showFab
-          ? FloatingActionButton.small(
+          ? FloatingActionButton(
               backgroundColor: AppColors.surface,
+              tooltip: l10n.scrollToBottomLabel,
               onPressed: _scrollToBottom,
               child: const Icon(Icons.keyboard_arrow_down, color: AppColors.foreground),
             )

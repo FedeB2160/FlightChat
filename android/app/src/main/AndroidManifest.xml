@@ -1,4 +1,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Scanner QR di onboarding (mobile_scanner) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- BLE mesh, Android 12+ (API 31). neverForLocation evita di dover
+         chiedere ACCESS_FINE_LOCATION: la posizione non serve. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Foreground service del nodo mesh (Fase 3).
+         FOREGROUND_SERVICE_CONNECTED_DEVICE e obbligatorio da Android 14. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
     <application
         android:label="flight_chat"
         android:name="${applicationName}"

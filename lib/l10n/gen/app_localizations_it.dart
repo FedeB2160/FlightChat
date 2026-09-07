@@ -65,4 +65,33 @@ class AppLocalizationsIt extends AppLocalizations {
   String nodesConnected(int count) {
     return '$count nodi connessi';
   }
+
+  @override
+  String get sendMessageLabel => 'Invia messaggio';
+
+  @override
+  String get scrollToBottomLabel => 'Scorri agli ultimi messaggi';
+
+  @override
+  String avatarOptionLabel(int index) {
+    return 'Avatar $index';
+  }
+
+  @override
+  String senderAvatarLabel(String name) {
+    return 'Avatar di $name';
+  }
+
+  @override
+  String get statusSent => 'Inviato';
+
+  @override
+  String get statusDelivered => 'Consegnato nella mesh';
+
+  @override
+  String get emptyChatTitle => 'Nessun messaggio';
+
+  @override
+  String get emptyChatHint =>
+      'I messaggi scambiati su questo volo appariranno qui.';
 }

@@ -21,6 +21,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   late final AnimationController _entranceController;
   late final List<Animation<double>> _staggerAnimations;
+  bool _motionStarted = false;
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
+    );
     _pulseScale = Tween<double>(begin: 0.95, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -50,7 +51,21 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       );
     });
 
-    _entranceController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_motionStarted) return;
+    _motionStarted = true;
+    // MediaQuery non è leggibile in initState: l'avvio va qui.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _pulseController.value = 0.5; // scala neutra 1.0, nessuna pulsazione
+      _entranceController.value = 1.0;
+    } else {
+      _pulseController.repeat(reverse: true);
+      _entranceController.forward();
+    }
   }
 
   @override
