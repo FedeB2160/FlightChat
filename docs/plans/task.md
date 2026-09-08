@@ -27,6 +27,15 @@
   - [x] Piano Gemini Pro scritto
   - [ ] Implementazione
   - [ ] Audit + Verifica
+  - [ ] Correzione da verifica su dispositivo: l'invio da tastiera hardware non funziona.
+        `lib/features/chat/presentation/widgets/message_input.dart` ha `maxLines: 5`, quindi
+        Flutter tratta il campo come multilinea e un Invio da tastiera fisica o Bluetooth
+        inserisce un ritorno a capo invece di inviare: `onSubmitted` non scatta e il messaggio
+        successivo finisce nello stesso testo. `TextInputAction.send` cambia solo l'icona del
+        tasto sulla tastiera software. Verificato su Galaxy il 2026-09-08 con
+        `adb shell input keyevent 66`. Il bottone di invio funziona, quindi non è bloccante.
+        Correzione: intercettare Invio senza Shift e chiamare la stessa `_handleSend`,
+        lasciando Shift+Invio per andare a capo. Aggiungere un test che simuli il tasto.
 - [ ] Fase 4 — iOS Swift CoreBluetooth
   - [x] Piano originale scritto
   - [x] Piano Gemini Pro scritto
