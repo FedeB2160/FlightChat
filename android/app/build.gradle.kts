@@ -42,6 +42,13 @@ kotlin {
     }
 }
 
+dependencies {
+    // Unit test JVM del pacchetto mesh (vincolo 9 di Fase 3).
+    // Il Kotlin Gradle Plugin non va dichiarato qui: lo applica gia il plugin
+    // Gradle di Flutter, e dichiararlo farebbe scattare il warning AGP >= 9.
+    testImplementation("junit:junit:4.13.2")
+}
+
 flutter {
     source = "../.."
 }

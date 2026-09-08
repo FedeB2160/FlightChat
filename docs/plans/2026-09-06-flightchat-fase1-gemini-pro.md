@@ -1,3 +1,9 @@
+> **Non seguito.** Per le Fasi 3-5 si segue solo il piano `-original` corrispondente,
+> su decisione dell'utente. Questo documento resta nel repository per tracciabilita:
+> i corpi delle PR #1 e #3 lo citano per numero di riga come motivazione di diversi
+> commenti `// DECISION:` nel codice, e spostarlo o eliminarlo renderebbe quei
+> riferimenti irraggiungibili.
+
 # FlightChat — Piano Fase 1 (Adattato per Gemini 3.1 Pro · Effort: HIGH)
 
 > **Istruzioni per il modello:** Questo documento è un piano di implementazione autosufficiente. Contiene TUTTO il contesto necessario. NON fare assunzioni al di fuori di ciò che è scritto qui. Segui ogni sezione nell'ordine esatto. Produci codice completo e funzionante per ogni file — nessun placeholder, nessun `// TODO`, nessun `...`. Ogni file deve compilare senza errori. Se trovi ambiguità, scegli l'opzione più robusta e documenta la scelta con un commento `// DECISION:`.
